@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// Credit to Sebastian Lague on Youtube and his tutorials+downloads for the original script I made changes to
+
 public class Controller2D : RaycastController
 {
 
@@ -17,7 +19,19 @@ public class Controller2D : RaycastController
 
     }
 
-    public void Move(Vector3 velocity, bool standingOnPlatform = false)
+    public void UpdateCollisions(Vector3 velocity = new Vector3(), bool standingOnPlatform = false)
+    {
+        velocity = new Vector3(velocity.x, -velocity.y, velocity.z)*Time.deltaTime*0.1f;
+        UpdateRaycastOrigins();
+        collisions.Reset();
+        collisions.velocityOld = velocity;
+
+
+        HorizontalCollisions(ref velocity);
+        VerticalCollisions(ref velocity);
+    }
+
+    /*public void Move(Vector3 velocity, bool standingOnPlatform = false)
     {
         UpdateRaycastOrigins();
         collisions.Reset();
@@ -42,7 +56,7 @@ public class Controller2D : RaycastController
         {
             collisions.below = true;
         }
-    }
+    }*/
 
     void HorizontalCollisions(ref Vector3 velocity)
     {
@@ -103,7 +117,7 @@ public class Controller2D : RaycastController
 
     void VerticalCollisions(ref Vector3 velocity)
     {
-        float directionY = Mathf.Sign(velocity.y);
+        float directionY = -Mathf.Sign(velocity.y);
         float rayLength = Mathf.Abs(velocity.y) + skinWidth;
 
         for (int i = 0; i < verticalRayCount; i++)
